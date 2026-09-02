@@ -1,0 +1,232 @@
+/* NileCart — GTM/Pixel Practice Lab
+   Palette: deep teal (Nile water), warm sand, terracotta accent */
+
+:root {
+  --teal: #14424A;
+  --teal-dark: #0D2E33;
+  --sand: #EFE6D3;
+  --sand-light: #F8F4EA;
+  --terracotta: #C1673D;
+  --ink: #1B1E1D;
+  --white: #FFFFFF;
+  --line: #DCD2BB;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: 'Source Sans Pro', -apple-system, Segoe UI, sans-serif;
+  color: var(--ink);
+  background: var(--sand-light);
+  line-height: 1.5;
+}
+
+h1, h2, h3 {
+  font-family: 'Fraunces', Georgia, serif;
+  font-weight: 600;
+  margin: 0 0 0.4em 0;
+  color: var(--teal-dark);
+}
+
+a { color: inherit; }
+
+/* ---------- Header ---------- */
+.site-header {
+  background: var(--teal);
+  color: var(--sand-light);
+  padding: 18px 32px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.brand {
+  font-family: 'Fraunces', Georgia, serif;
+  font-size: 22px;
+  font-weight: 600;
+  letter-spacing: 0.2px;
+  text-decoration: none;
+  color: var(--sand-light);
+}
+
+.brand span { color: var(--terracotta); }
+
+.nav-links { display: flex; gap: 24px; align-items: center; }
+.nav-links a { text-decoration: none; color: var(--sand-light); font-size: 15px; opacity: 0.9; }
+.nav-links a:hover { opacity: 1; }
+
+.cart-pill {
+  background: var(--terracotta);
+  color: var(--white);
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+/* ---------- Layout ---------- */
+.page {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 40px 32px 80px;
+}
+
+.hero {
+  background: var(--teal);
+  color: var(--sand-light);
+  padding: 64px 32px;
+  text-align: left;
+}
+
+.hero-inner { max-width: 1080px; margin: 0 auto; }
+.hero h1 { color: var(--white); font-size: 40px; max-width: 520px; }
+.hero p { max-width: 460px; opacity: 0.85; font-size: 17px; }
+
+/* ---------- Product grid ---------- */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 28px;
+  margin-top: 40px;
+}
+
+@media (min-width: 720px) {
+  .grid { grid-template-columns: repeat(4, 1fr); }
+}
+
+.card {
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  overflow: hidden;
+  text-decoration: none;
+  color: var(--ink);
+  display: block;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+.card:hover { transform: translateY(-3px); box-shadow: 0 10px 24px rgba(20,66,74,0.12); }
+
+.card-art {
+  aspect-ratio: 1 / 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.card-body { padding: 16px; }
+.card-body .name { font-weight: 600; font-size: 15px; margin-bottom: 4px; }
+.card-body .price { color: var(--terracotta); font-weight: 700; }
+
+/* ---------- Product detail ---------- */
+.product-detail {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 40px;
+  margin-top: 20px;
+}
+@media (min-width: 720px) {
+  .product-detail { grid-template-columns: 1fr 1fr; }
+}
+
+.product-art {
+  aspect-ratio: 4 / 3;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.product-info .price { font-size: 28px; color: var(--terracotta); font-weight: 700; margin: 12px 0 20px; }
+.product-info p.desc { color: #4a4f4d; margin-bottom: 24px; }
+
+/* ---------- Buttons ---------- */
+.btn {
+  display: inline-block;
+  background: var(--terracotta);
+  color: var(--white);
+  border: none;
+  padding: 13px 26px;
+  border-radius: 4px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+}
+.btn:hover { background: #a8542f; }
+.btn.secondary { background: transparent; color: var(--teal-dark); border: 1px solid var(--teal-dark); }
+.btn.secondary:hover { background: var(--sand); }
+.btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+/* ---------- Cart / Checkout ---------- */
+.cart-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 0;
+  border-bottom: 1px solid var(--line);
+}
+.cart-row .swatch { width: 56px; height: 56px; border-radius: 4px; flex-shrink: 0; }
+.cart-row .meta { flex: 1; }
+.cart-row .meta .name { font-weight: 600; }
+.cart-row .meta .qty { color: #6b6f6d; font-size: 14px; }
+.cart-row .line-total { font-weight: 700; }
+.cart-row .remove { background: none; border: none; color: var(--terracotta); cursor: pointer; font-size: 13px; text-decoration: underline; padding: 0; }
+
+.summary-box {
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  padding: 24px;
+  margin-top: 24px;
+}
+.summary-line { display: flex; justify-content: space-between; padding: 6px 0; font-size: 15px; }
+.summary-line.total { font-weight: 700; font-size: 18px; border-top: 1px solid var(--line); margin-top: 8px; padding-top: 14px; }
+
+.form-grid { display: grid; gap: 14px; max-width: 480px; }
+.form-grid label { font-size: 13px; font-weight: 600; color: var(--teal-dark); display: block; margin-bottom: 4px; }
+.form-grid input {
+  width: 100%;
+  padding: 11px 12px;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  font-size: 15px;
+  font-family: inherit;
+}
+
+.empty-state { padding: 60px 0; text-align: center; color: #6b6f6d; }
+
+/* ---------- Debug panel (teaching aid) ---------- */
+.debug-panel {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: var(--teal-dark);
+  color: #C9E4E0;
+  font-family: 'SFMono-Regular', Consolas, monospace;
+  font-size: 12px;
+  max-height: 40vh;
+  overflow-y: auto;
+  border-top: 2px solid var(--terracotta);
+  z-index: 999;
+}
+.debug-panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 16px;
+  background: var(--teal-dark);
+  cursor: pointer;
+  position: sticky;
+  top: 0;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+.debug-panel-header strong { color: var(--white); font-family: 'Source Sans Pro', sans-serif; font-size: 13px; }
+.debug-panel-body { padding: 8px 16px 16px; display: none; }
+.debug-panel.open .debug-panel-body { display: block; }
+.debug-entry { border-bottom: 1px dashed rgba(255,255,255,0.15); padding: 8px 0; }
+.debug-entry .ev-name { color: #E8A87C; font-weight: 700; }
+.debug-entry pre { margin: 4px 0 0; white-space: pre-wrap; word-break: break-word; }
+.debug-toggle-hint { font-size: 11px; opacity: 0.7; }

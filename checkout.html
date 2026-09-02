@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Checkout — NileCart</title>
+<link rel="stylesheet" href="style.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@600&family=Source+Sans+Pro:wght@400;600;700&display=swap" rel="stylesheet">
+
+<!-- GTM STEP 1: paste <head> snippet here, same as index.html -->
+
+</head>
+<body>
+<!-- GTM STEP 2: paste <noscript> snippet here, same as index.html -->
+
+<header class="site-header">
+  <a href="index.html" class="brand">Nile<span>Cart</span></a>
+  <nav class="nav-links">
+    <a href="index.html">Shop</a>
+    <a href="cart.html" class="cart-pill">Cart (<span id="cart-count">0</span>)</a>
+  </nav>
+</header>
+
+<main class="page" id="page-root"></main>
+
+<div class="debug-panel" id="debug-panel">
+  <div class="debug-panel-header" id="debug-header">
+    <strong>📊 Data Layer Log — <span id="debug-count">0</span> events</strong>
+    <span class="debug-toggle-hint">click to expand/collapse</span>
+  </div>
+  <div class="debug-panel-body" id="debug-body"></div>
+</div>
+
+<script src="script.js"></script>
+<script>
+  const root = document.getElementById("page-root");
+  const items = cartWithDetails();
+
+  if (items.length === 0) {
+    root.innerHTML = `<div class="empty-state">Nothing to check out yet. <a href="index.html">Back to shop.</a></div>`;
+  } else {
+    const total = cartTotal();
+    root.innerHTML = `
+      <h2>Checkout</h2>
+      <form class="form-grid" id="checkout-form">
+        <div>
+          <label for="name">Full name</label>
+          <input id="name" required>
+        </div>
+        <div>
+          <label for="email">Email</label>
+          <input id="email" type="email" required>
+        </div>
+        <div>
+          <label for="address">Shipping address</label>
+          <input id="address" required>
+        </div>
+        <div class="summary-box">
+          <div class="summary-line"><span>Items (${items.reduce((n,i)=>n+i.qty,0)})</span><span>$${total.toFixed(2)}</span></div>
+          <div class="summary-line total"><span>Total due</span><span>$${total.toFixed(2)}</span></div>
+        </div>
+        <button type="submit" class="btn">Place order (practice — no real charge)</button>
+      </form>
+    `;
+
+    // ---- EVENT: begin_checkout ----
+    // Fires once when the checkout page loads with items present.
+    pushDL({
+      event: "begin_checkout",
+      ecommerce: {
+        currency: "USD",
+        value: total,
+        items: items.map(i => itemPayload(i.product, i.qty))
+      }
+    });
+
+    document.getElementById("checkout-form").addEventListener("submit", (e) => {
+      e.preventDefault();
+      const orderId = "NC" + Date.now().toString().slice(-8);
+      const orderTotal = cartTotal();
+      const orderItems = cartWithDetails();
+
+      // ---- EVENT: purchase ----
+      // This is the highest-stakes event on the whole site — it's the one
+      // Meta CAPI, Google Ads conversion tracking and GA4 revenue reporting
+      // all key off. transaction_id must be unique per order (used later for
+      // deduplication between browser-side and server-side events).
+      pushDL({
+        event: "purchase",
+        ecommerce: {
+          transaction_id: orderId,
+          currency: "USD",
+          value: orderTotal,
+          items: orderItems.map(i => itemPayload(i.product, i.qty))
+        }
+      });
+
+      sessionStorage.setItem("nilecart_last_order", JSON.stringify({
+        orderId, total: orderTotal, items: orderItems.map(i => ({ name: i.product.name, qty: i.qty, price: i.product.price }))
+      }));
+      writeCart([]);
+      window.location.href = "thank-you.html";
+    });
+  }
+</script>
+</body>
+</html>

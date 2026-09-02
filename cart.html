@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Your cart — NileCart</title>
+<link rel="stylesheet" href="style.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@600&family=Source+Sans+Pro:wght@400;600;700&display=swap" rel="stylesheet">
+
+<!-- GTM STEP 1: paste <head> snippet here, same as index.html -->
+
+</head>
+<body>
+<!-- GTM STEP 2: paste <noscript> snippet here, same as index.html -->
+
+<header class="site-header">
+  <a href="index.html" class="brand">Nile<span>Cart</span></a>
+  <nav class="nav-links">
+    <a href="index.html">Shop</a>
+    <a href="cart.html" class="cart-pill">Cart (<span id="cart-count">0</span>)</a>
+  </nav>
+</header>
+
+<main class="page">
+  <h2>Your cart</h2>
+  <div id="cart-root"></div>
+</main>
+
+<div class="debug-panel" id="debug-panel">
+  <div class="debug-panel-header" id="debug-header">
+    <strong>📊 Data Layer Log — <span id="debug-count">0</span> events</strong>
+    <span class="debug-toggle-hint">click to expand/collapse</span>
+  </div>
+  <div class="debug-panel-body" id="debug-body"></div>
+</div>
+
+<script src="script.js"></script>
+<script>
+  function renderCart() {
+    const root = document.getElementById("cart-root");
+    const items = cartWithDetails();
+
+    if (items.length === 0) {
+      root.innerHTML = `<div class="empty-state">Your cart is empty. <a href="index.html">Go find something.</a></div>`;
+      return;
+    }
+
+    const rows = items.map(i => `
+      <div class="cart-row">
+        <div class="swatch" style="background:${i.product.color}"></div>
+        <div class="meta">
+          <div class="name">${i.product.name}</div>
+          <div class="qty">Qty ${i.qty} · $${i.product.price.toFixed(2)} each</div>
+        </div>
+        <div class="line-total">$${(i.product.price * i.qty).toFixed(2)}</div>
+        <button class="remove" data-id="${i.id}">Remove</button>
+      </div>
+    `).join("");
+
+    const total = cartTotal();
+
+    root.innerHTML = `
+      ${rows}
+      <div class="summary-box">
+        <div class="summary-line"><span>Subtotal</span><span>$${total.toFixed(2)}</span></div>
+        <div class="summary-line total"><span>Total</span><span>$${total.toFixed(2)}</span></div>
+        <a href="checkout.html" class="btn" style="margin-top:16px; display:inline-block;">Proceed to checkout</a>
+      </div>
+    `;
+
+    root.querySelectorAll(".remove").forEach(btn => {
+      btn.addEventListener("click", () => {
+        removeFromCart(btn.dataset.id);
+        renderCartBadge();
+        renderCart();
+      });
+    });
+  }
+
+  renderCart();
+
+  // ---- EVENT: view_cart ----
+  // Fires once when the cart page loads, IF there's something in it.
+  // (Firing an ecommerce event with an empty items array is a common
+  // real-world bug — guard against it, like we're doing here.)
+  const items = cartWithDetails();
+  if (items.length > 0) {
+    pushDL({
+      event: "view_cart",
+      ecommerce: {
+        currency: "USD",
+        value: cartTotal(),
+        items: items.map(i => itemPayload(i.product, i.qty))
+      }
+    });
+  }
+</script>
+</body>
+</html>

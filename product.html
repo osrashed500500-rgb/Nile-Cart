@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Product — NileCart</title>
+<link rel="stylesheet" href="style.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@600&family=Source+Sans+Pro:wght@400;600;700&display=swap" rel="stylesheet">
+
+<!-- GTM STEP 1: paste <head> snippet here, same as index.html -->
+
+</head>
+<body>
+<!-- GTM STEP 2: paste <noscript> snippet here, same as index.html -->
+
+<header class="site-header">
+  <a href="index.html" class="brand">Nile<span>Cart</span></a>
+  <nav class="nav-links">
+    <a href="index.html">Shop</a>
+    <a href="cart.html" class="cart-pill">Cart (<span id="cart-count">0</span>)</a>
+  </nav>
+</header>
+
+<main class="page" id="page-root">
+  <!-- filled by script below once we know which product id is in the URL -->
+</main>
+
+<div class="debug-panel" id="debug-panel">
+  <div class="debug-panel-header" id="debug-header">
+    <strong>📊 Data Layer Log — <span id="debug-count">0</span> events</strong>
+    <span class="debug-toggle-hint">click to expand/collapse</span>
+  </div>
+  <div class="debug-panel-body" id="debug-body"></div>
+</div>
+
+<script src="script.js"></script>
+<script>
+  const params = new URLSearchParams(window.location.search);
+  const product = getProduct(params.get("id")) || PRODUCTS[0];
+  const root = document.getElementById("page-root");
+
+  root.innerHTML = `
+    <div class="product-detail">
+      <div class="product-art" style="background:${product.color}22">
+        <svg width="90" height="90" viewBox="0 0 24 24" fill="none" stroke="${product.color}" stroke-width="1.2">
+          <circle cx="12" cy="12" r="9"/><path d="M12 6v6l4 4"/>
+        </svg>
+      </div>
+      <div class="product-info">
+        <h1>${product.name}</h1>
+        <div class="price">$${product.price.toFixed(2)}</div>
+        <p class="desc">${product.desc}</p>
+        <button class="btn" id="atc-btn">Add to cart</button>
+        <a href="cart.html" class="btn secondary" style="margin-left:10px;">View cart</a>
+      </div>
+    </div>
+  `;
+
+  // ---- EVENT 1: view_item ----
+  // Fires once, as soon as the product page finishes loading.
+  pushDL({
+    event: "view_item",
+    ecommerce: {
+      currency: "USD",
+      value: product.price,
+      items: [itemPayload(product, 1)]
+    }
+  });
+
+  // ---- EVENT 2: add_to_cart ----
+  // Fires on user action (button click), not on page load.
+  document.getElementById("atc-btn").addEventListener("click", () => {
+    addToCart(product.id, 1);
+    renderCartBadge();
+    pushDL({
+      event: "add_to_cart",
+      ecommerce: {
+        currency: "USD",
+        value: product.price,
+        items: [itemPayload(product, 1)]
+      }
+    });
+    const btn = document.getElementById("atc-btn");
+    btn.textContent = "Added ✓";
+    setTimeout(() => { btn.textContent = "Add to cart"; }, 1200);
+  });
+</script>
+</body>
+</html>

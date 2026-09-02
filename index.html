@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NileCart — Everyday goods, made well</title>
+<link rel="stylesheet" href="style.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@600&family=Source+Sans+Pro:wght@400;600;700&display=swap" rel="stylesheet">
+
+<!-- =====================================================================
+     GTM INSTALL — STEP 1 of 2
+     Paste your Google Tag Manager <head> snippet right below this comment,
+     on EVERY page of this site (index / product / cart / checkout / thank-you).
+     It looks like:
+
+     <script>(function(w,d,s,l,i){...})(window,document,'script','dataLayer','GTM-XXXXXXX');</script>
+
+     Do this AFTER you've confirmed the dataLayer.push() events are firing
+     correctly in the debug panel at the bottom of each page — don't debug
+     two unknowns (your code + GTM) at the same time.
+     ===================================================================== -->
+
+</head>
+<body>
+
+<!-- GTM INSTALL — STEP 2 of 2: paste the <noscript><iframe ...> snippet
+     immediately after the opening <body> tag, above everything else. -->
+
+<header class="site-header">
+  <a href="index.html" class="brand">Nile<span>Cart</span></a>
+  <nav class="nav-links">
+    <a href="index.html">Shop</a>
+    <a href="cart.html" class="cart-pill">Cart (<span id="cart-count">0</span>)</a>
+  </nav>
+</header>
+
+<section class="hero">
+  <div class="hero-inner">
+    <h1>Everyday goods, made to last a lot longer than "everyday."</h1>
+    <p>A small catalog of things worth keeping around. Free practice checkout — no real payment, no real charge.</p>
+  </div>
+</section>
+
+<main class="page">
+  <h2>The catalog</h2>
+  <div class="grid" id="product-grid"></div>
+</main>
+
+<!-- ===================== DEBUG PANEL (teaching aid) ===================== -->
+<div class="debug-panel" id="debug-panel">
+  <div class="debug-panel-header" id="debug-header">
+    <strong>📊 Data Layer Log — <span id="debug-count">0</span> events</strong>
+    <span class="debug-toggle-hint">click to expand/collapse</span>
+  </div>
+  <div class="debug-panel-body" id="debug-body"></div>
+</div>
+
+<script src="script.js"></script>
+<script>
+  const grid = document.getElementById("product-grid");
+  PRODUCTS.forEach(p => {
+    const a = document.createElement("a");
+    a.href = `product.html?id=${p.id}`;
+    a.className = "card";
+    a.innerHTML = `
+      <div class="card-art" style="background:${p.color}22">
+        <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="${p.color}" stroke-width="1.5">
+          <circle cx="12" cy="12" r="8"/><path d="M12 7v5l3 3"/>
+        </svg>
+      </div>
+      <div class="card-body">
+        <div class="name">${p.name}</div>
+        <div class="price">$${p.price.toFixed(2)}</div>
+      </div>`;
+    grid.appendChild(a);
+  });
+
+  // A view_item_list push here would be the natural next step once you're
+  // comfortable with the single-item events on the other pages.
+</script>
+</body>
+</html>

@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Order confirmed — NileCart</title>
+<link rel="stylesheet" href="style.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@600&family=Source+Sans+Pro:wght@400;600;700&display=swap" rel="stylesheet">
+
+<!-- GTM STEP 1: paste <head> snippet here, same as index.html
+     (the purchase event already fired on checkout.html before this
+     redirect — this page does NOT re-fire it, on purpose: firing purchase
+     twice, once on submit and once on the confirmation page, is one of the
+     most common real-world double-counting bugs.) -->
+
+</head>
+<body>
+<!-- GTM STEP 2: paste <noscript> snippet here, same as index.html -->
+
+<header class="site-header">
+  <a href="index.html" class="brand">Nile<span>Cart</span></a>
+  <nav class="nav-links">
+    <a href="index.html">Shop</a>
+    <a href="cart.html" class="cart-pill">Cart (<span id="cart-count">0</span>)</a>
+  </nav>
+</header>
+
+<main class="page" id="page-root"></main>
+
+<div class="debug-panel" id="debug-panel">
+  <div class="debug-panel-header" id="debug-header">
+    <strong>📊 Data Layer Log — <span id="debug-count">0</span> events</strong>
+    <span class="debug-toggle-hint">click to expand/collapse</span>
+  </div>
+  <div class="debug-panel-body" id="debug-body"></div>
+</div>
+
+<script src="script.js"></script>
+<script>
+  const root = document.getElementById("page-root");
+  let order = null;
+  try { order = JSON.parse(sessionStorage.getItem("nilecart_last_order")); } catch (e) {}
+
+  if (!order) {
+    root.innerHTML = `<div class="empty-state">No recent order found. <a href="index.html">Start shopping.</a></div>`;
+  } else {
+    const utms = getStoredUTMs();
+    const utmRows = utms
+      ? Object.entries(utms).map(([k, v]) => `<div class="summary-line"><span>${k}</span><span>${v}</span></div>`).join("")
+      : `<div class="summary-line"><span colspan="2">No UTM parameters captured this session — try landing on the site with ?utm_source=meta&utm_medium=paid_social&utm_campaign=test_camp appended to the URL.</span></div>`;
+
+    root.innerHTML = `
+      <h2>Thanks — order ${order.orderId} is confirmed</h2>
+      <p style="color:#4a4f4d;">This is a practice checkout. No real payment was taken.</p>
+      <div class="summary-box">
+        ${order.items.map(i => `<div class="summary-line"><span>${i.name} × ${i.qty}</span><span>$${(i.price * i.qty).toFixed(2)}</span></div>`).join("")}
+        <div class="summary-line total"><span>Total</span><span>$${order.total.toFixed(2)}</span></div>
+      </div>
+      <h3 style="margin-top:32px;">Campaign context captured this session</h3>
+      <div class="summary-box">${utmRows}</div>
+    `;
+  }
+</script>
+</body>
+</html>
