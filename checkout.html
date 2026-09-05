@@ -97,6 +97,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       // deduplication between browser-side and server-side events).
       pushDL({
         event: "purchase",
+            event_id: orderId,
         ecommerce: {
           transaction_id: orderId,
           currency: "USD",
